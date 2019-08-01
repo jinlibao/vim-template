@@ -1,4 +1,4 @@
-%FILE% by %USER%
-%FDATE%
+%FFILE% - %FDATE%
+Copyright © %YEAR% %USER% <%MAIL%>
 
 %HERE%

@@ -1,13 +1,13 @@
 /*
- * %FFILE%
- * Copyright (C) %YEAR% %USER% <%MAIL%>
+ * %FFILE% - %FDATE%
  *
+ * Copyright © %YEAR% %USER% <%MAIL%>
  * Distributed under terms of the %LICENSE% license.
  */
 import React, { Component } from 'react'
 
 
-class %FILE% extends Component {
+class %CLASS% extends Component {
   constructor(props: any) {
     super(props)
 

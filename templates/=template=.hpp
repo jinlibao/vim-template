@@ -4,8 +4,17 @@
  * Copyright © %YEAR% %USER% <%MAIL%>
  * Distributed under terms of the %LICENSE% license.
  */
-(function(){
-  'use strict';
 
+
+#ifndef %GUARD%
+#define %GUARD%
+
+class %CLASS% {
+public:
+  %CLASS%();
+  ~%CLASS%();
+private:
   %HERE%
-})();
+};
+
+#endif /* !%GUARD% */

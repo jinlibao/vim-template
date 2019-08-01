@@ -1,7 +1,7 @@
 ###
-# %FFILE%
-# Copyright (C) %YEAR% %USER% <%MAIL%>
+# %FFILE% - %FDATE%
 #
+# Copyright © %YEAR% %USER% <%MAIL%>
 # Distributed under terms of the %LICENSE% license.
 ###
 

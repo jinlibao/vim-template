@@ -1,12 +1,9 @@
 #! /usr/bin/env perl
 #
-# Short description for %FFILE%
+# %FFILE% - %FDATE%
 #
-# Author %USER% <%MAIL%>
-# Version 0.1
-# Copyright (C) %YEAR% %USER% <%MAIL%>
-# Modified On %FDATE%
-# Created  %FDATE%
+# Copyright © %YEAR% %USER% <%MAIL%>
+# Distributed under terms of the %LICENSE% license.
 #
 use strict;
 use warnings;
