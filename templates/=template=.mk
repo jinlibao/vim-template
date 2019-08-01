@@ -55,7 +55,7 @@ all: $(ALLPROGS)
 	$(JC) $(CFLAGS) $<
 
 %: %.go
-	$(GO) -o $@
+	$(GO) -o $@ $<
 
 %.pdf: %.tex
 	$(XELATEX) $(TEXFLAGS) $<

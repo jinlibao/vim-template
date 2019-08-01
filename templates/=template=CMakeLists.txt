@@ -9,6 +9,7 @@ cmake_minimum_required (VERSION 2.8)
 
 # projectname is the same as the main-executable
 project(%HERE%%FDIR%)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_definitions('-g')
 add_definitions('-Wall')
