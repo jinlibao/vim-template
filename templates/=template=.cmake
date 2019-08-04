@@ -15,6 +15,10 @@ add_definitions('-g')
 add_definitions('-Wall')
 add_definitions('-std=c++17')
 
+find_package(Armadillo)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
+
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cc)
 
 # add_custom_target(${PROJECT_NAME}-symlink ALL ln --force -s ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/${PROJECT_NAME} DEPENDS ${PROJECT_NAME})
