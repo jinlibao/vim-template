@@ -1,13 +1,15 @@
-/*
+/**
  * %FFILE% - %FDATE%
  *
  * Copyright © %YEAR% %USER% <%MAIL%>
  * Distributed under terms of the %LICENSE% license.
  */
 
-// #include "stdc++.h"
-// #include<bits/stdc++.h>
-#include <c++/9.1.0/x86_64-apple-darwin18/bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#include "stdc++.h"
+#else
+#include <bits/stdc++.h>
+#endif
 
 using namespace std;
 
@@ -43,14 +45,13 @@ const int INF = 1 << 29;
 const int MOD = 1e9 + 7;
 const int N = 100010;
 
-int main(int argc, char* argv[])
-{
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.precision(10);
-    cout << fixed;
+int main(int argc, char* argv[]) {
+  ios::sync_with_stdio(false);
+  cin.tie(0);
+  cout.precision(10);
+  cout << fixed;
 
-    %HERE%
+  % HERE %
 
-    return 0;
+  return 0;
 }

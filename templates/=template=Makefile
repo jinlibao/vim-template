@@ -19,6 +19,8 @@ LD = $(INCLUDES) $(LDFLAGS) $(LDLIBS)
 JC = java
 PC = python3
 GO = go build
+LATEXMK = latexmk
+LMFLAGS = -xelatex -silent
 PDFLATEX = pdflatex
 XELATEX = xelatex
 BIBLATEX = bibtex
@@ -41,17 +43,21 @@ TEXFILES = $(basename $(LATEXSRC))
 
 all: $(ALLPROGS)
 
-%: %.c
+%: %.c distclean
 	$(CC) $(CCFLAGS) -o $@ $<
+	./$@
 
-%: %.cpp
+%: %.cpp distclean
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
+	./$@
 
-%: %.cxx
+%: %.cxx distclean
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
+	./$@
 
-%: %.cc
+%: %.cc distclean
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
+	./$@
 
 %.class: %.java
 	$(JC) $(CFLAGS) $<
@@ -59,11 +65,12 @@ all: $(ALLPROGS)
 %: %.go
 	$(GO) -o $@ $<
 
-%.pdf: %.tex
-	$(XELATEX) $(TEXFLAGS) $<
-	$(BIBLATEX) $(basename $<)
-	$(XELATEX) $(TEXFLAGS) $<
-	$(XELATEX) $(TEXFLAGS) $<
+%.pdf: %.tex tex_distclean
+	$(LATEXMK) $(LMFLAGS) $<
+	# $(XELATEX) $(TEXFLAGS) $<
+	# $(BIBLATEX) $(basename $<)
+	# $(XELATEX) $(TEXFLAGS) $<
+	# $(XELATEX) $(TEXFLAGS) $<
 
 %.tex: %.pdc
 	$(PANDOC) $(PANDOCFLAGS) -o $@ $<
@@ -80,9 +87,11 @@ distclean: clean
 	$(RM) $(ALLPROGS)
 
 tex_clean:
+	$(LATEXMK) -c
 	$(RM) $(TEXFILES:=.out) $(TEXFILES:=.blg) $(TEXFILES:=.bbl) $(TEXFILES:=.idx) $(TEXFILES:=.aux) $(TEXFILES:=.log) $(TEXFILES:=.txt)
 
 tex_distclean: tex_clean
+	$(LATEXMK) -C
 	$(RM) $(TEXFILES:=.pdf)
 
 # vim:ft=make
