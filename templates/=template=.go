@@ -7,4 +7,9 @@
 
 package main
 
-%HERE%
+import "fmt"
+
+func main() {
+	fmt.Println("%FILE%");
+	%HERE%
+}

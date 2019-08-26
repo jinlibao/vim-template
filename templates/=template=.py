@@ -6,7 +6,6 @@
 # Copyright © %YEAR% %USER% <%MAIL%>
 # Distributed under terms of the %LICENSE% license.
 #
-
 '''
 %CLASS%
 '''
@@ -16,6 +15,7 @@ import scipy as sp
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+
 
 class %CLASS%(object):
 
@@ -34,10 +34,10 @@ class %CLASS%(object):
     def test(self):
         %HERE%
 
+
 if __name__ == '__main__':
     c = %CLASS%()
     c.test()
-
 '''
 End of file
 '''

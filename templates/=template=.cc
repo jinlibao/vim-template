@@ -1,12 +1,14 @@
-/*
+/**
  * %FFILE% - %FDATE%
  *
  * Copyright © %YEAR% %USER% <%MAIL%>
  * Distributed under terms of the %LICENSE% license.
  */
 
-// C Libraries
+// C
+#ifndef _GLIBCXX_NO_ASSERT
 #include <cassert>
+#endif
 #include <cctype>
 #include <cerrno>
 #include <cfloat>
@@ -22,16 +24,21 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <cwchar>
+#include <cwctype>
+
+#if __cplusplus >= 201103L
 #include <ccomplex>
 #include <cfenv>
 #include <cinttypes>
-#include <cstdalign>
+// #include <cstdalign>
 #include <cstdbool>
 #include <cstdint>
 #include <ctgmath>
-#include <cwchar>
-#include <cwctype>
-// C++ Libraries
+// #include <cuchar>
+#endif
+
+// C++
 #include <algorithm>
 #include <bitset>
 #include <complex>
@@ -64,9 +71,12 @@
 #include <utility>
 #include <valarray>
 #include <vector>
+
+#if __cplusplus >= 201103L
 #include <array>
 #include <atomic>
 #include <chrono>
+#include <codecvt>
 #include <condition_variable>
 #include <forward_list>
 #include <future>
@@ -79,10 +89,34 @@
 #include <system_error>
 #include <thread>
 #include <tuple>
-#include <typeindex>
 #include <type_traits>
+#include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
+#endif
+
+#if __cplusplus >= 201402L
+#include <shared_mutex>
+#endif
+
+#if __cplusplus >= 201703L
+#include <any>
+#include <charconv>
+// #include <execution>
+// #include <filesystem>
+// #include <memory_resource>
+#include <optional>
+#include <string_view>
+#include <variant>
+#endif
+
+#if __cplusplus > 201703L
+#include <bit>
+#include <compare>
+#include <span>
+#include <syncstream>
+#include <version>
+#endif
 
 using namespace std;
 

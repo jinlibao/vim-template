@@ -34,6 +34,8 @@ SRC = $(wildcard $(EXT))
 # EXT = "*.cc"
 # SRC = $(shell find . -maxdepth 1 -name $(EXT))
 ALLPROGS = $(basename $(SRC))
+LATEXSRC = $(wildcard *.tex)
+TEXFILES = $(basename $(LATEXSRC))
 
 .DEFAULT_GOAL := all
 
@@ -55,11 +57,11 @@ all: $(ALLPROGS)
 	$(JC) $(CFLAGS) $<
 
 %: %.go
-	$(GO) -o $@
+	$(GO) -o $@ $<
 
 %.pdf: %.tex
 	$(XELATEX) $(TEXFLAGS) $<
-	$(BIBLATEX) $(NAME)
+	$(BIBLATEX) $(basename $<)
 	$(XELATEX) $(TEXFLAGS) $<
 	$(XELATEX) $(TEXFLAGS) $<
 
@@ -78,10 +80,10 @@ distclean: clean
 	$(RM) $(ALLPROGS)
 
 tex_clean:
-	$(RM) $(NAME:=.out) $(NAME:=.blg) $(NAME:=.bbl)  $(NAME:=.bib) $(NAME:=.idx) $(NAME:=.aux) $(NAME:=.log) $(NAME:=.txt)
+	$(RM) $(TEXFILES:=.out) $(TEXFILES:=.blg) $(TEXFILES:=.bbl) $(TEXFILES:=.idx) $(TEXFILES:=.aux) $(TEXFILES:=.log) $(TEXFILES:=.txt)
 
 tex_distclean: tex_clean
-	$(RM) $(NAME:=.pdf)
+	$(RM) $(TEXFILES:=.pdf)
 
 # vim:ft=make
 #

@@ -1,6 +1,6 @@
 function [] = %FILE%()
 
-%%%FILE%
+%%%CLASS%
 % Syntax: %FILE%()
 % Inputs:
 % Outputs:

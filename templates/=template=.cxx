@@ -1,11 +1,15 @@
-/*
+/**
  * %FFILE% - %FDATE%
  *
  * Copyright © %YEAR% %USER% <%MAIL%>
  * Distributed under terms of the %LICENSE% license.
  */
 
-#include<bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#include "stdc++.h"
+#else
+#include <bits/stdc++.h>
+#endif
 
 using namespace std;
 
@@ -41,8 +45,7 @@ const int INF = 1 << 29;
 const int MOD = 1e9 + 7;
 const int N = 100010;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.precision(10);

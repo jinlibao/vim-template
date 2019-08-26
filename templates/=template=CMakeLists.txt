@@ -9,10 +9,15 @@ cmake_minimum_required (VERSION 2.8)
 
 # projectname is the same as the main-executable
 project(%HERE%%FDIR%)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_definitions('-g')
 add_definitions('-Wall')
 add_definitions('-std=c++17')
+
+find_package(Armadillo)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
 
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cc)
 
