@@ -91,9 +91,9 @@ all: $(ALLPROGS)
 %.so: $(OBJFILES)
 	$(CXX) $? -shared -o lib$@
 
-%.class: %.java
-	$(JC) $(CFLAGS) $<
-	$(JAVA) %
+%: %.java
+	$(JC) $<
+	$(JAVA) $@
 
 %: %.go
 	$(GO) -o $@ $<
