@@ -4,11 +4,15 @@
 #
 
 RM = rm -rf
+NVCC = nvcc
+NVCCFLAGS =
+# NVFLAGS = -gencode arch=compute_37,code=sm_37 # Nvidia K80
+# NVFLAGS = -gencode arch=compute_60,code=sm_60 # Nvidia Tesla P100
 CC = gcc   # clang icc mpicc mpiicc
 CXX = g++  # clang++ mpicxx
 CFLAGS = -std=c11 -g -Wall  # -O2 -O3 -m64 -xcore-avx2 -mavx2 -fopt-info-all -ftree-vectorize -arch=native -Wl,--no-as-needed
-CXXFLAGS = -std=c++17 -g -Wall
-NVCC = nvcc
+CXXFLAGS = -std=c++17 -Wall
+
 PKG += /usr /usr/local # /opt/X11
 INCLUDE_PATH += $(addsuffix /include, $(PKG))
 LD_LIBRARY_PATH += $(addsuffix /lib, $(PKG))
@@ -17,7 +21,18 @@ INCLUDES = $(addprefix -I, $(INCLUDE_PATH))
 LDFLAGS = $(addprefix -L, $(LD_LIBRARY_PATH))
 LDLIBS = $(addprefix -l, $(LIBS))
 LD = $(INCLUDES) $(LDFLAGS) $(LDLIBS)
-JC = java
+
+LOCAL_PKG = .
+LOCAL_INCLUDE_PATH += $(addsuffix /include, $(LOCAL_PKG))
+LOCAL_LD_LIBRARY_PATH += $(addsuffix /lib, $(LOCAL_PKG))
+LOCAL_LIBS =
+LOCAL_INCLUDES = $(addprefix -I, $(LOCAL_INCLUDE_PATH))
+LOCAL_LDFLAGS = $(addprefix -L, $(LOCAL_LD_LIBRARY_PATH))
+LOCAL_LDLIBS = $(addprefix -l, $(LOCAL_LIBS))
+LOCAL_LD = $(LOCAL_INCLUDES) $(LOCAL_LDFLAGS) $(LOCAL_LDLIBS)
+
+JC = javac
+JAVA = java
 PC = python3
 GO = go build
 LATEXMK = latexmk
@@ -32,11 +47,12 @@ GITHUB = https://raw.githubusercontent.com/jinlibao/Pandoc_LaTeX_Templates/maste
 # OpenGL on macOS
 MAC_GLFLAGS = -framework GLUT -framework OpenGL -Wno-deprecated
 
-EXT = *.cc %HERE%
+EXT = *.cc%HERE%
 SRC = $(wildcard $(EXT))
 # EXT = "*.cc"
 # SRC = $(shell find . -maxdepth 1 -name $(EXT))
 ALLPROGS = $(basename $(SRC))
+OBJFILES = $(ALLPROGS:=.o)
 LATEXSRC = $(wildcard *.tex)
 TEXFILES = $(basename $(LATEXSRC))
 
@@ -44,12 +60,12 @@ TEXFILES = $(basename $(LATEXSRC))
 
 all: $(ALLPROGS)
 
+%: %.cu distclean
+	$(NVCC) $(NVFLAGS) -o $@ $<
+	srun $@
+
 %: %.c distclean
 	$(CC) $(CCFLAGS) -o $@ $<
-	./$@
-
-%: %.cu distclean
-	$(NVCC) $(CCFLAGS) -o $@ $<
 	./$@
 
 %: %.cpp distclean
@@ -64,8 +80,20 @@ all: $(ALLPROGS)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
 	./$@
 
+%.o: %.cc
+	$(CXX) $< -c -fpic
+
+# create static library
+%.a: $(OBJFILES)
+	ar rcs lib$@ $?
+
+# create dynamic library
+%.so: $(OBJFILES)
+	$(CXX) $? -shared -o lib$@
+
 %.class: %.java
 	$(JC) $(CFLAGS) $<
+	$(JAVA) %
 
 %: %.go
 	$(GO) -o $@ $<
@@ -98,6 +126,5 @@ tex_clean:
 tex_distclean: tex_clean
 	$(LATEXMK) -C
 	$(RM) $(TEXFILES:=.pdf)
-
 # vim:ft=make
 #
