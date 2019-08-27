@@ -8,6 +8,7 @@ CC = gcc   # clang icc mpicc mpiicc
 CXX = g++  # clang++ mpicxx
 CFLAGS = -std=c11 -g -Wall  # -O2 -O3 -m64 -xcore-avx2 -mavx2 -fopt-info-all -ftree-vectorize -arch=native -Wl,--no-as-needed
 CXXFLAGS = -std=c++17 -g -Wall
+NVCC = nvcc
 PKG += /usr /usr/local # /opt/X11
 INCLUDE_PATH += $(addsuffix /include, $(PKG))
 LD_LIBRARY_PATH += $(addsuffix /lib, $(PKG))
@@ -45,6 +46,10 @@ all: $(ALLPROGS)
 
 %: %.c distclean
 	$(CC) $(CCFLAGS) -o $@ $<
+	./$@
+
+%: %.cu distclean
+	$(NVCC) $(CCFLAGS) -o $@ $<
 	./$@
 
 %: %.cpp distclean
