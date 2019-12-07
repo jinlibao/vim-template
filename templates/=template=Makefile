@@ -8,6 +8,8 @@ NVCC = nvcc
 NVCCFLAGS =
 # NVFLAGS = -gencode arch=compute_37,code=sm_37 # Nvidia K80
 # NVFLAGS = -gencode arch=compute_60,code=sm_60 # Nvidia Tesla P100
+ASM = yasm
+ASMFLAGS = -f macho64
 CC = gcc   # clang icc mpicc mpiicc
 CXX = g++  # clang++ mpicxx
 CFLAGS = -std=c11 -g -Wall  # -O2 -O3 -m64 -xcore-avx2 -mavx2 -fopt-info-all -ftree-vectorize -arch=native -Wl,--no-as-needed
@@ -59,6 +61,11 @@ TEXFILES = $(basename $(LATEXSRC))
 .DEFAULT_GOAL := all
 
 all: $(ALLPROGS)
+
+%: %.asm distclean
+	$(ASM) $(ASMFLAGS) -l $@.lst $<
+	ld -e _main -macosx_version_min 10.12 -arch x86_64 -o $@ $@.o -lSystem -no_pie
+	# $(CC) -o $@ $@.o
 
 %: %.cu distclean
 	$(NVCC) $(NVFLAGS) -o $@ $<
