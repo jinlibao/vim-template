@@ -5,11 +5,7 @@
  * Distributed under terms of the %LICENSE% license.
  */
 
-#ifndef ONLINE_JUDGE
-#include "stdc++.h"
-#else
 #include <bits/stdc++.h>
-#endif
 
 using namespace std;
 
@@ -20,8 +16,8 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define sz(x) int((x).size())
-#define sort(x) sort(all(x))
-#define rsort(x) sort(rall(x))
+#define asort(x) sort(all(x))
+#define dsort(x) sort(rall(x))
 #define pb push_back
 #define eb emplace_back
 #define mp make_pair
@@ -33,9 +29,13 @@ typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
+typedef vector<char> vc;
 typedef vector<string> vs;
+typedef vector<vs> vvs;
 typedef vector<int> vi;
 typedef vector<vi> vvi;
+typedef vector<long> vl;
+typedef vector<vl> vvl;
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
 

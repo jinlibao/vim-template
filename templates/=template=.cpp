@@ -5,8 +5,8 @@
  * Distributed under terms of the %LICENSE% license.
  */
 
-#include "%FILE%.hh"
+#include "%FILE%.hpp"
 
-%CLASS%::%CLASS%() { }
+%CLASS%::%CLASS%() { %HERE% }
 
 %CLASS%::~%CLASS%() { }
