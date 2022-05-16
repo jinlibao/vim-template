@@ -3,11 +3,6 @@
 # %USER%, %FDATE%
 #
 
-RM = rm -rf
-CC = gcc   # clang icc mpicc mpiicc
-CXX = g++  # clang++ mpicxx
-CFLAGS = -std=c11 -g -Wall  # -O2 -O3 -m64 -xcore-avx2 -mavx2 -fopt-info-all -ftree-vectorize -arch=native -Wl,--no-as-needed
-CXXFLAGS = -std=c++17 -g -Wall
 PKG += /usr /usr/local # /opt/X11
 INCLUDE_PATH += $(addsuffix /include, $(PKG))
 LD_LIBRARY_PATH += $(addsuffix /lib, $(PKG))
@@ -16,26 +11,22 @@ INCLUDES = $(addprefix -I, $(INCLUDE_PATH))
 LDFLAGS = $(addprefix -L, $(LD_LIBRARY_PATH))
 LDLIBS = $(addprefix -l, $(LIBS))
 LD = $(INCLUDES) $(LDFLAGS) $(LDLIBS)
-JC = java
-PC = python3
-GO = go build
-LATEXMK = latexmk
-LMFLAGS = -xelatex -silent
-PDFLATEX = pdflatex
-XELATEX = xelatex
-BIBLATEX = bibtex
-PANDOC = pandoc
-TEXFLAGS = -interaction=batchmode
-PANDOCFLAGS = -f markdown
-GITHUB = https://raw.githubusercontent.com/jinlibao/Pandoc_LaTeX_Templates/master/Pandoc-LaTeX%201000/Homework/Template/LaTeX
-# OpenGL on macOS
-MAC_GLFLAGS = -framework GLUT -framework OpenGL -Wno-deprecated
 
-EXT = *.cc %HERE%
+LOCAL_PKG = .
+LOCAL_INCLUDE_PATH += $(addsuffix /include, $(LOCAL_PKG))
+LOCAL_LD_LIBRARY_PATH += $(addsuffix /lib, $(LOCAL_PKG))
+LOCAL_LIBS =
+LOCAL_INCLUDES = $(addprefix -I, $(LOCAL_INCLUDE_PATH))
+LOCAL_LDFLAGS = $(addprefix -L, $(LOCAL_LD_LIBRARY_PATH))
+LOCAL_LDLIBS = $(addprefix -l, $(LOCAL_LIBS))
+LOCAL_LD = $(LOCAL_INCLUDES) $(LOCAL_LDFLAGS) $(LOCAL_LDLIBS)
+
+EXT = *.cc%HERE%
 SRC = $(wildcard $(EXT))
 # EXT = "*.cc"
 # SRC = $(shell find . -maxdepth 1 -name $(EXT))
 ALLPROGS = $(basename $(SRC))
+OBJFILES = $(ALLPROGS:=.o)
 LATEXSRC = $(wildcard *.tex)
 TEXFILES = $(basename $(LATEXSRC))
 
@@ -43,10 +34,19 @@ TEXFILES = $(basename $(LATEXSRC))
 
 all: $(ALLPROGS)
 
+RM = rm -rf
+
+# C
+CC = gcc   # clang icc mpicc mpiicc
+CFLAGS = -std=c11 -g -Wall  # -O2 -O3 -m64 -xcore-avx2 -mavx2 -fopt-info-all -ftree-vectorize -arch=native -Wl,--no-as-needed
 %: %.c distclean
 	$(CC) $(CCFLAGS) -o $@ $<
 	./$@
 
+# C++
+CXX = clang++  # g++ mpicxx
+CXXFLAGS = -std=c++17 -pedantic -Wall -Wextra -Wshadow -fsanitize=undefined -fsanitize=address -DLOCAL=1
+# CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -O2 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -fsanitize=address -fsanitize=undefined -fno-sanitize-recover -fstack-protector -DLOCAL=1
 %: %.cpp distclean
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
 	./$@
@@ -59,11 +59,70 @@ all: $(ALLPROGS)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LD)
 	./$@
 
-%.class: %.java
-	$(JC) $(CFLAGS) $<
+%.o: %.cc
+	$(CXX) $< -c -fpic
 
+# create static library
+%.a: $(OBJFILES)
+	ar rcs lib$@ $?
+
+# create dynamic library
+%.so: $(OBJFILES)
+	$(CXX) $? -shared -o lib$@
+
+clean:
+	$(RM) $(ALLPROGS:=.dSYM) $(ALLPROGS:=.o)
+
+distclean: clean
+	$(RM) $(ALLPROGS)
+
+
+# Nvida Cuda C
+NVCC = nvcc
+NVCCFLAGS =
+# NVFLAGS = -gencode arch=compute_37,code=sm_37 # Nvidia K80
+# NVFLAGS = -gencode arch=compute_60,code=sm_60 # Nvidia Tesla P100
+%: %.cu distclean
+	$(NVCC) $(NVFLAGS) -o $@ $<
+	srun $@
+
+# OpenGL on macOS
+MAC_GLFLAGS = -framework GLUT -framework OpenGL -Wno-deprecated
+
+# Asembly
+ASM = yasm
+ASMFLAGS = -f macho64
+
+%: %.asm distclean
+	$(ASM) $(ASMFLAGS) -l $@.lst $<
+	ld -e _main -macosx_version_min 10.12 -arch x86_64 -o $@ $@.o -lSystem -no_pie
+	# $(CC) -o $@ $@.o
+
+# Java
+JC = javac
+JAVA = java
+
+%: %.java
+	$(JC) $<
+	$(JAVA) $@
+
+# Python
+PC = python3
+
+# Go
+GO = go build
 %: %.go
 	$(GO) -o $@ $<
+
+# LaTeX
+LATEXMK = latexmk
+LMFLAGS = -xelatex -silent
+PDFLATEX = pdflatex
+XELATEX = xelatex
+BIBLATEX = bibtex
+PANDOC = pandoc
+TEXFLAGS = -interaction=batchmode
+PANDOCFLAGS = -f markdown
 
 %.pdf: %.tex tex_distclean
 	$(LATEXMK) $(LMFLAGS) $<
@@ -75,17 +134,6 @@ all: $(ALLPROGS)
 %.tex: %.pdc
 	$(PANDOC) $(PANDOCFLAGS) -o $@ $<
 
-makefile_update:
-	mv $(MAKEFILE) $(MAKEFILE).old
-	wget -q $(GITHUB)/$(MAKEFILE)
-	if [ -f $(MAKEFILE) ]; then rm $(MAKEFILE).old; else mv $(MAKEFILE).old $(MAKEFILE); fi
-
-clean:
-	$(RM) $(ALLPROGS:=.dSYM) $(ALLPROGS:=.o)
-
-distclean: clean
-	$(RM) $(ALLPROGS)
-
 tex_clean:
 	$(LATEXMK) -c
 	$(RM) $(TEXFILES:=.out) $(TEXFILES:=.blg) $(TEXFILES:=.bbl) $(TEXFILES:=.idx) $(TEXFILES:=.aux) $(TEXFILES:=.log) $(TEXFILES:=.txt)
@@ -94,5 +142,11 @@ tex_distclean: tex_clean
 	$(LATEXMK) -C
 	$(RM) $(TEXFILES:=.pdf)
 
+# Misc
+GITHUB = https://raw.githubusercontent.com/jinlibao/Pandoc_LaTeX_Templates/master/Pandoc-LaTeX%201000/Homework/Template/LaTeX
+makefile_update:
+	mv $(MAKEFILE) $(MAKEFILE).old
+	wget -q $(GITHUB)/$(MAKEFILE)
+	if [ -f $(MAKEFILE) ]; then rm $(MAKEFILE).old; else mv $(MAKEFILE).old $(MAKEFILE); fi
 # vim:ft=make
 #
