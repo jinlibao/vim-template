@@ -1,4 +1,3 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/macos,linux,windows,python,c++,c,zsh
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,linux,windows,python,c++,c,zsh
 
@@ -326,3 +325,4 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,python,c++,c,zsh
+*DS_Store
